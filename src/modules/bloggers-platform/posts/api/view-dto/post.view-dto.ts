@@ -17,7 +17,6 @@ export class PostViewDto {
 
   static mapToView(
     post: PostDocument,
-    blogName: string,
     newestLikes: NewestLikesType[],
   ): PostViewDto {
     const dto = new PostViewDto();
@@ -28,7 +27,7 @@ export class PostViewDto {
     dto.content = post.content;
     dto.blogId = post.blogId;
     dto.createdAt = post.createdAt.toISOString();
-    dto.blogName = blogName;
+    dto.blogName = post.blogName;
     dto.extendedLikesInfo = {
       likesCount: post.likesCount,
       dislikesCount: post.dislikesCount,
@@ -38,6 +37,29 @@ export class PostViewDto {
 
     return dto;
   }
+
+  // static mapToViewRefactored(
+  //   post: PostDocument,
+  //   newestLikes: NewestLikesType[],
+  // ): PostViewDto {
+  //   const dto = new PostViewDto();
+  //
+  //   dto.id = post._id.toString();
+  //   dto.title = post.title;
+  //   dto.shortDescription = post.shortDescription;
+  //   dto.content = post.content;
+  //   dto.blogId = post.blogId;
+  //   dto.createdAt = post.createdAt.toISOString();
+  //   dto.blogName = blogName;
+  //   dto.extendedLikesInfo = {
+  //     likesCount: post.likesCount,
+  //     dislikesCount: post.dislikesCount,
+  //     myStatus: LikesStatuses.None, //TODO change after adding bearer auth
+  //     newestLikes: newestLikes,
+  //   };
+  //
+  //   return dto;
+  // }
 }
 
 export enum LikesStatuses {
