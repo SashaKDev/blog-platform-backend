@@ -12,41 +12,33 @@ import { PostsQueryParams } from '../api/input-dto/posts.query-params.input-dto'
 import { PostForBlogInputDto } from '../api/input-dto/post-for-blog.input-dto';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { newestLikesMock } from '../../../../core/newestLikesMock';
+import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private PostModel: PostModelType,
     private postsRepository: PostsRepository,
+    private postsQueryRepository: PostsQueryRepository,
     private blogsRepository: BlogsRepository,
     private blogsService: BlogsService,
   ) {}
 
   async getPostById(id: string): Promise<PostViewDto> {
     const post = await this.postsRepository.findByIdOrNotFoundFail(id);
-    const blog = await this.blogsRepository.findByIdOrNotFoundFail(post.blogId);
 
-    return PostViewDto.mapToView(post, blog.name, newestLikesMock);
+    return PostViewDto.mapToView(post, newestLikesMock);
   }
 
   async getAllPosts(
     query: PostsQueryParams,
   ): Promise<BasePaginatedViewDto<PostViewDto[]>> {
-    const posts: PostDocument[] = await this.postsRepository.getAllPosts(query);
+    const posts: PostDocument[] =
+      await this.postsQueryRepository.getAllPosts(query);
     const totalCount = await this.postsRepository.countDocuments();
-    const blogIds = posts.map((post) => post.blogId);
-    const blogs = await this.blogsRepository.findBlogsByPostIds(blogIds);
-
-    const blogsMap = new Map(
-      blogs.map((blog) => [blog._id.toString(), blog.name]),
-    );
 
     const items: PostViewDto[] = posts.map((post) => {
-      let blogName = blogsMap.get(post.blogId);
-      if (!blogName) {
-        blogName = 'deleted blog';
-      }
-      return PostViewDto.mapToView(post, blogName, newestLikesMock);
+      return PostViewDto.mapToView(post, newestLikesMock);
     });
 
     return BasePaginatedViewDto.mapToView<PostViewDto[]>({
@@ -57,13 +49,27 @@ export class PostsService {
     });
   }
 
+  async getPostsForBlog(
+    blogId: string,
+    query: PostsQueryParams,
+  ): Promise<BasePaginatedViewDto<PostViewDto[]>> {
+
+    const blog = await this.blogsRepository.findByIdOrNotFoundFail(blogId);
+    const posts = await this.postsQueryRepository.getPostsForBlog(
+      blogId,
+      query,
+    );
+
+    return PostViewDto.
+  }
+
   async createPost(post: PostInputDto): Promise<PostViewDto> {
     const blog = await this.blogsRepository.findByIdOrNotFoundFail(post.blogId);
 
-    const newPost = this.PostModel.createInstance(post);
+    const newPost = this.PostModel.createInstance(post, blog.name);
     await this.postsRepository.save(newPost);
 
-    return PostViewDto.mapToView(newPost, blog.name, newestLikesMock);
+    return PostViewDto.mapToView(newPost, newestLikesMock);
   }
 
   async createPostForBlog(
@@ -72,11 +78,14 @@ export class PostsService {
   ): Promise<PostViewDto> {
     const blog = await this.blogsService.getBlogOrNotFoundFail(blogId);
 
-    const newPost = this.PostModel.createInstance({ ...dto, blogId: blogId });
+    const newPost = this.PostModel.createInstance(
+      { ...dto, blogId: blogId },
+      blog.name,
+    );
 
     await this.postsRepository.save(newPost);
 
-    return PostViewDto.mapToView(newPost, blog.name, newestLikesMock);
+    return PostViewDto.mapToView(newPost, newestLikesMock);
   }
 
   async updatePost(id: string, dto: PostUpdateDto): Promise<void> {
