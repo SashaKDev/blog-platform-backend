@@ -10,6 +10,7 @@ import { PostsController } from './posts/api/posts.controller';
 import { Post, PostSchema } from './posts/domain/post.entity';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsService } from './posts/application/posts.service';
+import { PostsQueryRepository } from './posts/infrastructure/posts.query-repository';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PostsService } from './posts/application/posts.service';
     BlogsRepository,
     BlogsQueryRepository,
     PostsRepository,
+    PostsQueryRepository,
     PostsService,
   ],
 })
