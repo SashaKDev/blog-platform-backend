@@ -21,6 +21,7 @@ import { BlogsQueryRepository } from '../infrastructure/blogs.query-repository';
 import { PostViewDto } from '../../posts/api/view-dto/post.view-dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostForBlogInputDto } from '../../posts/api/input-dto/post-for-blog.input-dto';
+import { PostsQueryParams } from '../../posts/api/input-dto/posts.query-params.input-dto';
 
 @Controller('blogs')
 export class BlogController {
@@ -39,6 +40,14 @@ export class BlogController {
     @Query() query: BlogsQueryParams,
   ): Promise<BasePaginatedViewDto<BlogViewDto[]>> {
     return this.blogsQueryRepository.findAllBlogs(query);
+  }
+
+  @Get()
+  async getPostsForBlog(
+    @Param('id') blogId: string,
+    @Query() query: PostsQueryParams,
+  ): Promise<BasePaginatedViewDto<PostViewDto[]>> {
+    return this.postsService.getPostsForBlog(blogId, query);
   }
 
   @Post()
