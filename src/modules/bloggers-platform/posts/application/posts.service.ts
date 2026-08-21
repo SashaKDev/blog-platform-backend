@@ -53,14 +53,28 @@ export class PostsService {
     blogId: string,
     query: PostsQueryParams,
   ): Promise<BasePaginatedViewDto<PostViewDto[]>> {
-
     const blog = await this.blogsRepository.findByIdOrNotFoundFail(blogId);
     const posts = await this.postsQueryRepository.getPostsForBlog(
       blogId,
       query,
     );
 
-    return PostViewDto.
+    const items = posts.map((post) => {
+      return PostViewDto.mapToView(post, newestLikesMock);
+    });
+
+    const totalCount = await this.postsRepository.countDocuments({
+      blogId: blogId,
+    });
+    const pageNumber = query.pageNumber;
+    const pageSize = query.pageSize;
+
+    return BasePaginatedViewDto.mapToView<PostViewDto[]>({
+      items,
+      totalCount,
+      pageNumber,
+      pageSize,
+    });
   }
 
   async createPost(post: PostInputDto): Promise<PostViewDto> {

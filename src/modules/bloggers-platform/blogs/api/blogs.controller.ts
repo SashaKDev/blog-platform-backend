@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogInputDto } from './input-dto/blog.input-dto';
 
@@ -22,6 +23,7 @@ import { PostViewDto } from '../../posts/api/view-dto/post.view-dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostForBlogInputDto } from '../../posts/api/input-dto/post-for-blog.input-dto';
 import { PostsQueryParams } from '../../posts/api/input-dto/posts.query-params.input-dto';
+import { BasicGuard } from '../../../../core/guards/basic.guard';
 
 @Controller('blogs')
 export class BlogController {
@@ -42,15 +44,16 @@ export class BlogController {
     return this.blogsQueryRepository.findAllBlogs(query);
   }
 
-  @Get()
+  @Get(':blogId/posts')
   async getPostsForBlog(
-    @Param('id') blogId: string,
+    @Param('blogId') blogId: string,
     @Query() query: PostsQueryParams,
   ): Promise<BasePaginatedViewDto<PostViewDto[]>> {
     return this.postsService.getPostsForBlog(blogId, query);
   }
 
   @Post()
+  @UseGuards(BasicGuard)
   async createBlog(@Body() blogInputDto: BlogInputDto): Promise<BlogViewDto> {
     const newBlogId = await this.blogsService.createBlog(blogInputDto);
 
@@ -62,7 +65,7 @@ export class BlogController {
     @Param('blogId') blogId: string,
     @Body() dto: PostForBlogInputDto,
   ): Promise<PostViewDto> {
-    console.log('dto', dto);
+    console.log(dto);
     return this.postsService.createPostForBlog(blogId, dto);
   }
 

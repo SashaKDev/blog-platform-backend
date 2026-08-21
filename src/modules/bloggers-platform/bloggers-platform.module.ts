@@ -11,15 +11,21 @@ import { Post, PostSchema } from './posts/domain/post.entity';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsService } from './posts/application/posts.service';
 import { PostsQueryRepository } from './posts/infrastructure/posts.query-repository';
+import { CommentsController } from './comments/api/comments.controller';
+import { CommentsService } from './comments/application/comments.service';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import { CommentsQueryRepository } from './comments/infrastructure/comments.query-repository';
+import { Comment, CommentSchema } from './comments/domain/comment.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
   ],
-  controllers: [BlogController, PostsController],
+  controllers: [BlogController, PostsController, CommentsController],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -27,6 +33,9 @@ import { PostsQueryRepository } from './posts/infrastructure/posts.query-reposit
     PostsRepository,
     PostsQueryRepository,
     PostsService,
+    CommentsService,
+    CommentsRepository,
+    CommentsQueryRepository,
   ],
 })
 export class BloggersPlatformModule {}

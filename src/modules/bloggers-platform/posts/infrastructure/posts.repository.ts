@@ -1,18 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from '../domain/post.entity';
-import { Model } from 'mongoose';
+import { Post, PostDocument, type PostModelType } from '../domain/post.entity';
+import type { QueryFilter } from 'mongoose';
 
 @Injectable()
 export class PostsRepository {
-  constructor(@InjectModel(Post.name) private PostModel: Model<PostDocument>) {}
+  constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}
 
   async save(post: PostDocument): Promise<void> {
     await post.save();
   }
 
-  async countDocuments(): Promise<number> {
-    return this.PostModel.countDocuments({ deletedAt: null });
+  async countDocuments(
+    filter: QueryFilter<PostDocument> = {},
+  ): Promise<number> {
+    const baseFilter = { deletedAt: null };
+    const mergedFilter = { ...baseFilter, ...filter };
+    return this.PostModel.countDocuments(mergedFilter);
   }
 
   // async findById(id: string): Promise<BlogDocument | null> {

@@ -16,10 +16,16 @@ import { PostUpdateDto } from './input-dto/post.update-dto';
 import { BasePaginatedViewDto } from '../../../../core/dto/base.paginated-view.dto';
 import { PostViewDto } from './view-dto/post.view-dto';
 import { PostsQueryParams } from './input-dto/posts.query-params.input-dto';
+import { CommentsQueryParams } from '../../comments/api/input-dto/comments.query-params.input-dto';
+import { CommentViewDto } from '../../comments/api/view-dto/comment.view-dto';
+import { CommentsService } from '../../comments/application/comments.service';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private postsService: PostsService) {}
+  constructor(
+    private postsService: PostsService,
+    private commentsService: CommentsService,
+  ) {}
 
   @Get()
   async getAllPosts(
@@ -28,9 +34,17 @@ export class PostsController {
     return this.postsService.getAllPosts(query);
   }
 
-  @Get(':id')
-  async getPost(@Param('id') id: string) {
-    return this.postsService.getPostById(id);
+  @Get(':postId')
+  async getPost(@Param('postId') postId: string): Promise<PostViewDto> {
+    return this.postsService.getPostById(postId);
+  }
+
+  @Get('/:postId/comments')
+  async getCommentsForPost(
+    @Param('postId') postId: string,
+    @Query() query: CommentsQueryParams,
+  ): Promise<BasePaginatedViewDto<CommentViewDto[]>> {
+    return this.commentsService.getCommentsForPost(postId, query);
   }
 
   @Post()

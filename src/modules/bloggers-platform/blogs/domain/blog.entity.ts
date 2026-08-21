@@ -19,7 +19,7 @@ export class Blog {
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
-  @Prop({ type: Boolean, required: true, default: true })
+  @Prop({ type: Boolean, required: true, default: false })
   isMembership: boolean;
 
   static createInstance(blogDto: BlogInputDto): BlogDocument {

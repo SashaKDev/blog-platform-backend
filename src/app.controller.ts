@@ -16,4 +16,9 @@ export class AppController {
         </html>
     `;
   }
+
+  @Get('testing/all-data')
+  async deleteAllData(){
+
+  }
 }
