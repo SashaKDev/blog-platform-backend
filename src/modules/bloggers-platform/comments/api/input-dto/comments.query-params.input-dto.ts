@@ -1,9 +1,11 @@
 import { BaseQueryParams } from '../../../../../core/dto/base.query-params.input-dto';
-
-export class CommentsQueryParams extends BaseQueryParams {
-  sortBy: CommentsSortBy = CommentsSortBy.CreatedAt;
-}
+import { IsEnum } from 'class-validator';
 
 export enum CommentsSortBy {
   CreatedAt = 'createdAt',
+}
+
+export class CommentsQueryParams extends BaseQueryParams {
+  @IsEnum(CommentsSortBy)
+  sortBy: CommentsSortBy = CommentsSortBy.CreatedAt;
 }

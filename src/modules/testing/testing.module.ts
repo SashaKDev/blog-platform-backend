@@ -12,8 +12,10 @@ import {
   Comment,
   CommentSchema,
 } from '../bloggers-platform/comments/domain/comment.entity';
-import { User, UserSchema } from '../user-accounts/domain/user.entity';
+import { User, UserSchema } from '../user-accounts/users/domain/user.entity';
 import { TestingController } from './api/testing.controller';
+import { Session } from 'node:inspector';
+import { SessionSchema } from '../user-accounts/sessions/domain/session.entity';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { TestingController } from './api/testing.controller';
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: User.name, schema: UserSchema },
+      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [TestingController],

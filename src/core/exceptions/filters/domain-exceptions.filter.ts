@@ -17,17 +17,17 @@ export class DomainExceptionsFilter implements ExceptionFilter {
     const status = this.mapToHttpStatus(exception.code);
 
     // Более полный ответ
-    response.status(status).json({
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      message: exception.message,
-      extensions: exception.extensions,
-      code: status,
-    });
-    // Ответ для тестов инкубатора
     // response.status(status).json({
-    //   errorsMessages: exception.extensions,
+    //   timestamp: new Date().toISOString(),
+    //   path: request.url,
+    //   message: exception.message,
+    //   extensions: exception.extensions,
+    //   code: status,
     // });
+    // Ответ для тестов инкубатора
+    response.status(status).json({
+      errorsMessages: exception.extensions,
+    });
   }
 
   private mapToHttpStatus(code: DomainExceptionCodes): number {

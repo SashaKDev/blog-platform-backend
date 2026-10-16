@@ -1,24 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller('/start-test')
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
+  @Get('/test')
   getHello(): string {
-    return `
-        <html>
-          <body>
-              <h1>Все работает броу</h1>
-              
-          </body>
-        </html>
-    `;
+    console.log(process.env.NODE_ENV);
+    return 'Hello World!';
   }
 
   @Get('testing/all-data')
-  async deleteAllData(){
-
-  }
+  async deleteAllData() {}
 }

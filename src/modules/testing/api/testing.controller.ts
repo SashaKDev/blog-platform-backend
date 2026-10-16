@@ -13,7 +13,12 @@ import {
   Post,
   PostDocument,
 } from '../../bloggers-platform/posts/domain/post.entity';
-import { User, UserDocument } from '../../user-accounts/domain/user.entity';
+import {
+  User,
+  UserDocument,
+} from '../../user-accounts/users/domain/user.entity';
+import { Session } from 'node:inspector';
+import { SessionDocument } from '../../user-accounts/sessions/domain/session.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -22,6 +27,7 @@ export class TestingController {
     @InjectModel(Comment.name) private CommentModel: Model<CommentDocument>,
     @InjectModel(Post.name) private PostModel: Model<PostDocument>,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
+    @InjectModel(Session.name) private SessionModel: Model<SessionDocument>,
   ) {}
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('all-data')
@@ -30,5 +36,6 @@ export class TestingController {
     await this.CommentModel.deleteMany();
     await this.PostModel.deleteMany();
     await this.UserModel.deleteMany();
+    await this.SessionModel.deleteMany();
   }
 }

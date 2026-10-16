@@ -1,10 +1,14 @@
 import { Length } from 'class-validator';
+import { Trim } from '../../../../../core/decorators/trim.decorator';
 
 export class PostForBlogInputDto {
-  @Length(1, 20)
+  @Trim()
+  @Length(1, 30)
   title: string;
-  @Length(1, 50)
-  shortDescription: string;
+  @Trim()
   @Length(1, 100)
+  shortDescription: string;
+  @Trim()
+  @Length(1, 1000)
   content: string;
 }

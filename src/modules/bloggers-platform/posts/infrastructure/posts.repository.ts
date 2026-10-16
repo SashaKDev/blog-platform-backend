@@ -32,7 +32,7 @@ export class PostsRepository {
       deletedAt: null,
     });
     if (!foundPost) {
-      throw new NotFoundException('post not found');
+      throw new NotFoundException('Post not found');
     }
     return foundPost;
   }

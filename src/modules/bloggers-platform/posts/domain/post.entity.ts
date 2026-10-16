@@ -26,12 +26,6 @@ export class Post {
   @Prop({ type: String, required: true })
   blogName: string;
 
-  @Prop({ type: Number, required: true })
-  likesCount: number;
-
-  @Prop({ type: Number, required: true })
-  dislikesCount: number;
-
   static createInstance(postDto: PostInputDto, blogName: string): PostDocument {
     const newPost = new this();
     newPost.title = postDto.title;
@@ -39,8 +33,6 @@ export class Post {
     newPost.content = postDto.content;
     newPost.blogId = postDto.blogId;
     newPost.blogName = blogName;
-    newPost.likesCount = 0;
-    newPost.dislikesCount = 0;
 
     return newPost as PostDocument;
   }

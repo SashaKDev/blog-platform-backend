@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Comment } from '../domain/comment.entity';
+import { Comment, CommentDocument } from '../domain/comment.entity';
 import type { CommentModelType } from '../domain/comment.entity';
 import { CommentViewDto } from '../api/view-dto/comment.view-dto';
 import { BasePaginatedViewDto } from '../../../../core/dto/base.paginated-view.dto';
@@ -12,24 +12,23 @@ export class CommentsQueryRepository {
     @InjectModel(Comment.name) private CommentModel: CommentModelType,
   ) {}
 
-  async findByIdOrNotFoundFail(commentId: string): Promise<CommentViewDto> {
+  async findByIdOrNotFoundFail(commentId: string): Promise<CommentDocument> {
     const comment = await this.CommentModel.findOne({
       _id: commentId,
       deletedAt: null,
     });
-    console.log(comment);
 
     if (!comment) {
       throw new NotFoundException('comment not found');
     }
 
-    return CommentViewDto.mapToView(comment);
+    return comment;
   }
 
   async getCommentsForPost(
     postId: string,
     query: CommentsQueryParams,
-  ): Promise<BasePaginatedViewDto<CommentViewDto[]>> {
+  ): Promise<CommentDocument[]> {
     const filter = {
       deletedAt: null,
       postId: postId,
@@ -42,24 +41,15 @@ export class CommentsQueryRepository {
 
     const skip = (pageNumber - 1) * pageSize;
 
-    const totalCount = await this.CommentModel.countDocuments(filter);
-
-    const comments = await this.CommentModel.find(filter)
+    return this.CommentModel.find(filter)
       .sort({
         [sortBy]: sortDirection,
       })
       .skip(skip)
       .limit(pageSize);
+  }
 
-    const items = comments.map((comment) => {
-      return CommentViewDto.mapToView(comment);
-    });
-
-    return BasePaginatedViewDto.mapToView<CommentViewDto[]>({
-      items,
-      totalCount,
-      pageNumber,
-      pageSize,
-    });
+  async countDocuments(postId: string): Promise<number> {
+    return this.CommentModel.countDocuments({ postId: postId });
   }
 }

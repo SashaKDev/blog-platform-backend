@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
+import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Schema({ timestamps: true })
 export class Comment {
@@ -15,28 +16,27 @@ export class Comment {
   @Prop({ type: String, required: true })
   userLogin: string;
 
-  @Prop({ type: Number, required: true })
-  likesCount: number;
-
-  @Prop({ type: Number, required: true })
-  dislikesCount: number;
-
   createdAt: Date;
   updatedAt: Date;
 
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
-  // static createInstance(commentDto: CommentInputDto): CommentDocument {
-  //   const newComment = new this();
-  //
-  //   return newComment as CommentDocument;
-  // }
+  static createInstance(commentDto: CreateCommentDto): CommentDocument {
+    const newComment = new this();
+
+    newComment.content = commentDto.content;
+    newComment.postId = commentDto.postId;
+    newComment.userId = commentDto.userId;
+    newComment.userLogin = commentDto.userLogin;
+
+    return newComment as CommentDocument;
+  }
 
   // sayHi(): void {
   //   console.log(`${this.name} hi`);
   // }
-
+  //
   // update(dto: CommentInputDto) {
   //
   // }

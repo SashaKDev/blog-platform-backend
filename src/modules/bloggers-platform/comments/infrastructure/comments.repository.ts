@@ -12,6 +12,10 @@ export class CommentsRepository {
     @InjectModel(Comment.name) private CommentModel: CommentModelType,
   ) {}
 
+  async save(comment: CommentDocument): Promise<void> {
+    await comment.save();
+  }
+
   async findByIdOrNotFoundFail(commentId: string): Promise<CommentDocument> {
     const comment = await this.CommentModel.findOne({
       _id: commentId,
